@@ -7,6 +7,8 @@ import com.expertsoft.model.Product;
 import com.expertsoft.util.AveragingBigDecimalCollector;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -48,7 +50,8 @@ class OrderStats {
      * @return map, where order size values mapped to lists of orders
      */
     static Map<Integer, List<Order>> orderSizes(final Stream<Order> orders) {
-        return orders.collect(Collectors.groupingBy(order -> order.getOrderItems().size(), Collectors.toList()));
+        Collection<Order> orderCollection = orders.collect(Collectors.toList());
+        return orderCollection.stream().collect(Collectors.groupingBy(order -> order.getOrderItems().size(), Collectors.toList()));
     }
 
     /**
@@ -135,9 +138,11 @@ class OrderStats {
      */
     static BigDecimal averageProductPriceForCreditCard(final Stream<Customer> customers, final String cardNumber) {
         final AveragingBigDecimalCollector collector = new AveragingBigDecimalCollector();
-//        customers
-//                .flatMap(customer -> customer.getOrders().stream().filter(order -> order.getPaymentInfo().getCardNumber().equals(cardNumber))
-//                        .collect()
-        return null;
+        Stream<BigDecimal> prices = customers.flatMap(customer -> customer.getOrders().stream())
+                .filter(order -> order.getPaymentInfo().getCardNumber().equals(cardNumber))
+                .flatMap(order -> order.getOrderItems().stream())
+                .flatMap(orderItem -> Collections.nCopies(orderItem.getQuantity(), orderItem.getProduct()).stream())
+                .map(Product::getPrice);
+        return prices.collect(collector);
     }
 }
