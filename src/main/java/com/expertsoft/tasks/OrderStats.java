@@ -50,8 +50,7 @@ class OrderStats {
      * @return map, where order size values mapped to lists of orders
      */
     static Map<Integer, List<Order>> orderSizes(final Stream<Order> orders) {
-        Collection<Order> orderCollection = orders.collect(Collectors.toList());
-        return orderCollection.stream().collect(Collectors.groupingBy(order -> order.getOrderItems().size(), Collectors.toList()));
+        return orders.collect(Collectors.groupingBy(order -> order.getOrderItems().size(), Collectors.toList()));
     }
 
     /**
