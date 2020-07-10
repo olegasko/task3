@@ -57,7 +57,6 @@ public class OrderStatsTest {
     }
 
     @Test
-    @Ignore("Ignored because of invalid test data")
     public void task2Test1() {
         final Stream<Order> orders = orderStream;
         final Map<Integer, List<Order>> orderSizes = OrderStats.orderSizes(orders);

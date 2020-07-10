@@ -2,12 +2,12 @@ package com.expertsoft.tasks;
 
 import com.expertsoft.model.Customer;
 import com.expertsoft.model.Order;
+import com.expertsoft.model.OrderItem;
 import com.expertsoft.model.PaymentInfo;
 import com.expertsoft.model.Product;
 import com.expertsoft.util.AveragingBigDecimalCollector;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ class OrderStats {
      * @return map, where order size values mapped to lists of orders
      */
     static Map<Integer, List<Order>> orderSizes(final Stream<Order> orders) {
-        return orders.collect(Collectors.groupingBy(order -> order.getOrderItems().size(), Collectors.toList()));
+        return orders.collect(Collectors.groupingBy(o-> o.getOrderItems().stream().map(OrderItem::getQuantity).reduce(Integer::sum).get()));
     }
 
     /**
