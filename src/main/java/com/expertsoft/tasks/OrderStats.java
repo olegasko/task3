@@ -137,11 +137,10 @@ class OrderStats {
      */
     static BigDecimal averageProductPriceForCreditCard(final Stream<Customer> customers, final String cardNumber) {
         final AveragingBigDecimalCollector collector = new AveragingBigDecimalCollector();
-        Stream<BigDecimal> prices = customers.flatMap(customer -> customer.getOrders().stream())
+        return customers.flatMap(customer -> customer.getOrders().stream())
                 .filter(order -> order.getPaymentInfo().getCardNumber().equals(cardNumber))
                 .flatMap(order -> order.getOrderItems().stream())
                 .flatMap(orderItem -> Collections.nCopies(orderItem.getQuantity(), orderItem.getProduct()).stream())
-                .map(Product::getPrice);
-        return prices.collect(collector);
+                .map(Product::getPrice).collect(collector);
     }
 }
